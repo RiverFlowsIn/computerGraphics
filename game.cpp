@@ -92,7 +92,7 @@ void drawTruck() {
 
     for (int i = 0; i < 18; i++) {
         glColor3fv(BLUE_RGB);
-        glRectf(0.0, lanes[i] - 0.013, 0.1, lanes[i] + 0.013);
+        glRectf(0.1, lanes[i] - 0.013, 0.152, lanes[i] + 0.013);
     }
 
 }
@@ -102,9 +102,9 @@ void drawCar() {
 
     float x1, y1, x2, y2;
     float angle;
-    double radius = 0.2;
+    double radius = 0.02;
 
-    x1 = 0.5, y1 = 0.6;
+    x1 = 0.5, y1 = lanes[0];
     glColor3fv(BLUE_RGB);
 
     glBegin(GL_TRIANGLE_FAN);
