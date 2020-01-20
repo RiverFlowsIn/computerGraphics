@@ -1,14 +1,3 @@
-//-----------------------------------------------------------------------
-// File:           opengl-2D-sample.cpp
-// Description:    A sample 2D OpenGL program
-// Programmer:     Dave Mount
-// For:            CMSC 425 - Game Programming
-// Date:           Feb 2013
-//
-// This is just a sample skeleton C++ program, which shows the
-// general structure of a minimal OpenGL program.
-//-----------------------------------------------------------------------
-
 #include <cstdlib>                      // standard definitions
 #include <iostream>                     // C++ I/O
 #include <cstdio>                       // C I/O (for sprintf) 
@@ -25,12 +14,11 @@ using namespace std;                    // make std accessible
 //-----------------------------------------------------------------------
 
 GLint TIMER_DELAY = 10000;                      // timer delay (10 seconds)
-GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };            // drawing colors
+GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };           
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = {1, 1, 1};
 GLfloat BLACK_RGB[] = {0, 0, 0};
 float* lanes = new float[18]();
-
 
 
 //-----------------------------------------------------------------------
@@ -38,14 +26,6 @@ float* lanes = new float[18]();
 //-----------------------------------------------------------------------
 static bool isReversed = false;                 // draw reversed colors?
 
-//-----------------------------------------------------------------------
-//  Callbacks
-//      The global variable "isReversed" describes the drawing state.
-//      When false, a blue rectangle is drawn on top of red diamond.
-//      When true the colors are reversed.  The "isReversed" variable is
-//      complemented whenever the left mouse button is clicked or the
-//      timer goes off (every 10 seconds).
-//-----------------------------------------------------------------------
 
 void myReshape(int w, int h) {
     cout << "MyReshape called width=" << w << " height=" << h << endl;
@@ -56,6 +36,21 @@ void myReshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
     glutPostRedisplay();                        // request redisplay
 }
+
+void fillArray() {
+
+    // This list holds the coordinate of the middle of all lanes.
+
+    int j = 0;
+    for (int i = 10; i < 95; i = i + 16) {
+        float number = i / 100.0;
+        lanes[j++] = number - 0.04;
+        lanes[j++] = number;
+        lanes[j++] = number + 0.04;
+    }
+
+}
+
 
 void drawRoads() {
     /*
@@ -92,6 +87,40 @@ void drawLines() {
     }
 }
 
+
+void drawTruck() {
+
+    for (int i = 0; i < 18; i++) {
+        glColor3fv(BLUE_RGB);
+        glRectf(0.0, lanes[i] - 0.013, 0.1, lanes[i] + 0.013);
+    }
+
+}
+
+void drawCar() {
+
+
+    float x1, y1, x2, y2;
+    float angle;
+    double radius = 0.2;
+
+    x1 = 0.5, y1 = 0.6;
+    glColor3fv(BLUE_RGB);
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(x1, y1);
+
+    for (angle = 1.0f; angle < 361.0f; angle += 0.2)
+    {
+        x2 = x1 + sin(angle) * radius;
+        y2 = y1 + cos(angle) * radius;
+        glVertex2f(x2, y2);
+    }
+
+    glEnd();
+
+}
+
 // draw diamond and rectangle
 void drawObjects(GLfloat* diamColor, GLfloat* rectColor) {
     glColor3fv(rectColor);                      // set rectangle color
@@ -105,8 +134,11 @@ void myDisplay(void) {                          // display callback
 
     drawRoads();
     drawLines();
-    drawObjects(RED_RGB, BLUE_RGB);
+    drawTruck();
+    drawCar();
+    //drawObjects(RED_RGB, BLUE_RGB);
     glutSwapBuffers();                          // swap buffers
+
 }
 
 void myTimer(int id) {                          // timer callback
@@ -155,7 +187,7 @@ int main(int argc, char** argv)
   - Hit q to quit.\n\
 -----------------------------------------------------------------------\n";
 
-
+    fillArray();
 
     glutInit(&argc, argv);                      // OpenGL initializations
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);// double buffering and RGB
