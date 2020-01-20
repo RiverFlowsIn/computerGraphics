@@ -29,6 +29,8 @@ GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };            // drawing colors
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = {1, 1, 1};
 GLfloat BLACK_RGB[] = {0, 0, 0};
+float* lanes = new float[18]();
+
 
 
 //-----------------------------------------------------------------------
@@ -64,7 +66,7 @@ void drawRoads() {
 
     Total row = (6 * 3) + 7     = 25
     Each row = 1 / 25           = 0.4
-
+ 
     */
 
     for (int i = 4; i < 85; i = i + 16) {
@@ -75,10 +77,25 @@ void drawRoads() {
 
 }
 
+void drawLines() {
+
+    for (int i = 8; i < 95; i = i + 16) {
+        double number = i / 100.0;
+        for (int j = 0; j < 10; j = j + 1) {
+            double value = j / 10.0 + 0.01;
+            glColor3fv(BLACK_RGB);
+            glRectf(value, number - 0.002, value + 0.08, number + 0.002);
+
+            glColor3fv(BLACK_RGB);
+            glRectf(value, number + 0.04 - 0.002, value + 0.08, number + 0.04 + 0.002);
+        }
+    }
+}
+
 // draw diamond and rectangle
 void drawObjects(GLfloat* diamColor, GLfloat* rectColor) {
     glColor3fv(rectColor);                      // set rectangle color
-    glRectf(0.25, 0.25, 0.75, 0.75);            // draw the rectangle
+    glRectf(0.0, 0.0, 0.1, 0.05);            // draw the rectangle
 }
 
 void myDisplay(void) {                          // display callback
@@ -87,6 +104,7 @@ void myDisplay(void) {                          // display callback
     glClear(GL_COLOR_BUFFER_BIT);               // clear the window
 
     drawRoads();
+    drawLines();
     drawObjects(RED_RGB, BLUE_RGB);
     glutSwapBuffers();                          // swap buffers
 }
@@ -136,6 +154,8 @@ int main(int argc, char** argv)
   - Try resizing and covering/uncovering the window.\n\
   - Hit q to quit.\n\
 -----------------------------------------------------------------------\n";
+
+
 
     glutInit(&argc, argv);                      // OpenGL initializations
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);// double buffering and RGB
