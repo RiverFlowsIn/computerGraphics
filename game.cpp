@@ -13,13 +13,13 @@ using namespace std;                    // make std accessible
 // Global data
 //-----------------------------------------------------------------------
 
-GLint TIMER_DELAY = 1000;                      // timer delay (10 seconds)
-GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };           
+GLint TIMER_DELAY = 10;                     
+GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
-GLfloat WHITE_RGB[] = {1, 1, 1};
-GLfloat BLACK_RGB[] = {0, 0, 0};
+GLfloat WHITE_RGB[] = { 1, 1, 1 };
+GLfloat BLACK_RGB[] = { 0, 0, 0 };
 float* lanes = new float[18]();
-float vecihle = 0.1;
+float vehicle = 0.1;
 
 
 //-----------------------------------------------------------------------
@@ -55,14 +55,12 @@ void fillArray() {
 
 void drawRoads() {
     /*
-
     Total number of roads       : 6
     Number of lanes per road    : 3
     Total number of sidewalks   : 7
-
     Total row = (6 * 3) + 7     = 25
     Each row = 1 / 25           = 0.4
- 
+
     */
 
     for (int i = 4; i < 85; i = i + 16) {
@@ -93,8 +91,9 @@ void drawTruck() {
 
     for (int i = 0; i < 18; i++) {
         glColor3fv(BLUE_RGB);
-        glRectf(0.1, lanes[i] - 0.013, 0.152, lanes[i] + 0.013);
+        glRectf(vehicle, lanes[i] - 0.013, vehicle + 0.052, lanes[i] + 0.013);
     }
+    vehicle += 0.001;
 
 }
 
