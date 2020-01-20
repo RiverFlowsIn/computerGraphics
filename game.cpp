@@ -13,12 +13,13 @@ using namespace std;                    // make std accessible
 // Global data
 //-----------------------------------------------------------------------
 
-GLint TIMER_DELAY = 10000;                      // timer delay (10 seconds)
+GLint TIMER_DELAY = 1000;                      // timer delay (10 seconds)
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };           
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = {1, 1, 1};
 GLfloat BLACK_RGB[] = {0, 0, 0};
 float* lanes = new float[18]();
+float vecihle = 0.1;
 
 
 //-----------------------------------------------------------------------
@@ -99,33 +100,13 @@ void drawTruck() {
 
 void drawCar() {
 
-
-    float x1, y1, x2, y2;
-    float angle;
-    double radius = 0.02;
-
-    x1 = 0.5, y1 = lanes[0];
-    glColor3fv(BLUE_RGB);
-
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(x1, y1);
-
-    for (angle = 1.0f; angle < 361.0f; angle += 0.2)
-    {
-        x2 = x1 + sin(angle) * radius;
-        y2 = y1 + cos(angle) * radius;
-        glVertex2f(x2, y2);
+    for (int i = 0; i < 18; i++) {
+        glColor3fv(BLUE_RGB);
+        glRectf(0.8, lanes[i] - 0.013, 0.826, lanes[i] + 0.013);
     }
 
-    glEnd();
-
 }
 
-// draw diamond and rectangle
-void drawObjects(GLfloat* diamColor, GLfloat* rectColor) {
-    glColor3fv(rectColor);                      // set rectangle color
-    glRectf(0.0, 0.0, 0.1, 0.05);            // draw the rectangle
-}
 
 void myDisplay(void) {                          // display callback
     cout << "MyDisplay called" << endl;
@@ -136,13 +117,13 @@ void myDisplay(void) {                          // display callback
     drawLines();
     drawTruck();
     drawCar();
-    //drawObjects(RED_RGB, BLUE_RGB);
     glutSwapBuffers();                          // swap buffers
 
 }
 
 void myTimer(int id) {                          // timer callback
     cout << "Timer just went off.  Reversing colors." << endl;
+
     isReversed = !isReversed;                   // reverse drawing colors
     glutPostRedisplay();                        // request redraw
     glutTimerFunc(TIMER_DELAY, myTimer, 0);     // reset timer for 10 seconds
