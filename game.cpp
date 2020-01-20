@@ -9,38 +9,26 @@
 
 using namespace std;                    // make std accessible
 
-//-----------------------------------------------------------------------
-// Global data
-//-----------------------------------------------------------------------
-
 GLint TIMER_DELAY = 10;                     
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 float* lanes = new float[18]();
-float vehicle = 0.1;
-
-
-//-----------------------------------------------------------------------
-//  Global variables
-//-----------------------------------------------------------------------
-static bool isReversed = false;                 // draw reversed colors?
-
+float vehicle = 0.0;
+float car = 1.0;
 
 void myReshape(int w, int h) {
     cout << "MyReshape called width=" << w << " height=" << h << endl;
-    glViewport(0, 0, w, h);                    // update the viewport
-    glMatrixMode(GL_PROJECTION);                // update projection
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0, 1.0, 0.0, 1.0);             // map unit square to viewport
+    gluOrtho2D(0.0, 1.0, 0.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
-    glutPostRedisplay();                        // request redisplay
+    glutPostRedisplay();
 }
 
 void fillArray() {
-
-    // This list holds the coordinate of the middle of all lanes.
 
     int j = 0;
     for (int i = 10; i < 95; i = i + 16) {
@@ -52,16 +40,7 @@ void fillArray() {
 
 }
 
-
 void drawRoads() {
-    /*
-    Total number of roads       : 6
-    Number of lanes per road    : 3
-    Total number of sidewalks   : 7
-    Total row = (6 * 3) + 7     = 25
-    Each row = 1 / 25           = 0.4
-
-    */
 
     for (int i = 4; i < 85; i = i + 16) {
         double value = i / 100.0;
@@ -86,7 +65,6 @@ void drawLines() {
     }
 }
 
-
 void drawTruck() {
 
     for (int i = 0; i < 18; i++) {
@@ -95,54 +73,58 @@ void drawTruck() {
     }
     vehicle += 0.001;
 
+    if (vehicle > 1)
+        vehicle = 0;
+
 }
 
 void drawCar() {
 
     for (int i = 0; i < 18; i++) {
         glColor3fv(BLUE_RGB);
-        glRectf(0.8, lanes[i] - 0.013, 0.826, lanes[i] + 0.013);
+        glRectf(car, lanes[i] - 0.013, car + 0.026, lanes[i] + 0.013);
     }
+
+    car -= 0.001;
+
+    if (car < 0)
+        car = 1;
 
 }
 
+void myDisplay(void) {
 
-void myDisplay(void) {                          // display callback
-    cout << "MyDisplay called" << endl;
-    glClearColor(0, 0, 0, 1);                   // background is black
-    glClear(GL_COLOR_BUFFER_BIT);               // clear the window
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     drawRoads();
     drawLines();
     drawTruck();
     drawCar();
-    glutSwapBuffers();                          // swap buffers
+    glutSwapBuffers();
 
 }
 
-void myTimer(int id) {                          // timer callback
-    cout << "Timer just went off.  Reversing colors." << endl;
+void myTimer(int id) {
 
-    isReversed = !isReversed;                   // reverse drawing colors
-    glutPostRedisplay();                        // request redraw
-    glutTimerFunc(TIMER_DELAY, myTimer, 0);     // reset timer for 10 seconds
+    glutPostRedisplay();
+    glutTimerFunc(TIMER_DELAY, myTimer, 0);
 }
 
-void myMouse(int b, int s, int x, int y) {      // mouse click callback
+void myMouse(int b, int s, int x, int y) {
     if (s == GLUT_DOWN) {
         cout << "Mouse click detected at coordinates x="
             << x << " and y=" << y << endl;
         if (b == GLUT_LEFT_BUTTON) {
-            isReversed = !isReversed;
             cout << "Left mouse click.  Reversing colors." << endl;
             glutPostRedisplay();
         }
     }
 }
-// keyboard callback
+
 void myKeyboard(unsigned char c, int x, int y) {
-    switch (c) {                                // c is the key that is hit
-    case 'q':                               // 'q' means quit
+    switch (c) {
+    case 'q':
         exit(0);
         break;
     default:
@@ -151,21 +133,8 @@ void myKeyboard(unsigned char c, int x, int y) {
     }
 }
 
-//-----------------------------------------------------------------------
-//  Main program
-//      This does all the set up for the program.  It creates the game
-//      and then passes control to glut.
-//-----------------------------------------------------------------------
-
 int main(int argc, char** argv)
 {
-    cout << "\n\
------------------------------------------------------------------------\n\
-  CMSC 425 Sample Program.\n\
-  - Click left mouse button to swap colors.\n\
-  - Try resizing and covering/uncovering the window.\n\
-  - Hit q to quit.\n\
------------------------------------------------------------------------\n";
 
     fillArray();
 
@@ -182,4 +151,5 @@ int main(int argc, char** argv)
     glutTimerFunc(TIMER_DELAY, myTimer, 0);
     glutMainLoop();                             // start it running
     return 0;                                   // ANSI C expects this
+
 }
