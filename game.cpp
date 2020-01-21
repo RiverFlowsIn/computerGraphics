@@ -41,7 +41,7 @@ void myReshape(int w, int h) {
     glutPostRedisplay();
 }
 
-void fillArray() {
+void fillArrays() {
 
     int j = 0;
     for (int i = 10; i < 95; i = i + 16) {
@@ -86,32 +86,6 @@ void drawLines() {
     }
 }
 
-void drawTruck() {
-
-    for (int i = 0; i < 18; i++) {
-        glColor3fv(BLUE_RGB);
-        glRectf(vehicle, lanes[i] - 0.013, vehicle + 0.052, lanes[i] + 0.013);
-    }
-    vehicle += 0.001;
-
-    if (vehicle > 1)
-        vehicle = 0;
-
-}
-
-void drawCar() {
-
-    for (int i = 0; i < 18; i++) {
-        glColor3fv(BLUE_RGB);
-        glRectf(car, lanes[i] - 0.013, car + 0.026, lanes[i] + 0.013);
-    }
-
-    car -= 0.001;
-
-    if (car < 0)
-        car = 1;
-
-}
 
 void moveVehicles() {
 
@@ -124,9 +98,16 @@ void moveVehicles() {
                 vehicles[i].position += 0.001;
             else
                 vehicles[i].position -= 0.001;
+
+            if (vehicles[i].position < 0 || vehicles[i].position > 1) {
+                Vehicle v;
+                vehicles[i] = v;
+                vehicleControl[i] = 0;
+            }
         }
     }
 }
+
 
 void createVehicle() {
 
@@ -142,15 +123,9 @@ void createVehicle() {
     else
         v.type = 0.052;
 
-
-    if (randomDirection == 0) {
-        v.direction = 0;
-        v.position = 0;
-    }
-    else {
-        v.direction = 1;
-        v.position = 1;
-    }
+    v.direction = randomLane % 2 == 0;
+    v.position = randomLane % 2 == 0;
+ 
 
     int index = -1;
     for (int i = 0; i < 100; i++) {
@@ -159,13 +134,11 @@ void createVehicle() {
             break;
         }
     }
-    cout << index << "-index \n";
+    cout << "index: " << index << " \n";
     if (index != -1) {
         vehicles[index] = v;
         vehicleControl[index] = 1;
     }
-
-    cout << vehicleControl << "\n";
 
 }
 
@@ -179,7 +152,6 @@ void myDisplay(void) {
 
     int random = std::rand() % 1000 + 1;
     if (random < 20) {
-        cout << random << " vehicle çizildi... \n";
         createVehicle();
     }
     moveVehicles();
@@ -219,7 +191,7 @@ void myKeyboard(unsigned char c, int x, int y) {
 int main(int argc, char** argv)
 {
     std::srand(std::time(0));
-    fillArray();
+    fillArrays();
 
     glutInit(&argc, argv);                      // OpenGL initializations
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);// double buffering and RGB
