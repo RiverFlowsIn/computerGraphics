@@ -21,6 +21,7 @@ class Vehicle {
 
 class Agent {
     public:
+    int roadPos;
     float road;       //25 possible road
     float position;   //left right position 
     int direction;    // 0 is up,  1 is down
@@ -73,6 +74,7 @@ void fillArrays() {
         vehicleControl[i] = 0;
     }
 
+    agent.roadPos = 0;
     agent.road = roads[0];
     agent.position = 0.5;
     agent.direction = 0;
@@ -187,6 +189,23 @@ void createVehicle() {
 
 }
 
+
+void moveAgent(int move) {
+    cout << move << "\n";
+
+    if (move == 3) {
+        agent.roadPos += 1;
+        agent.road = roads[agent.roadPos];
+    } else if (move == 2) {
+        agent.roadPos -= 1;
+        agent.road = roads[agent.roadPos];
+    } else if (move == 0) {
+        agent.position -= 0.025;
+    } else if (move == 1) {
+        agent.position += 0.025;
+    }
+}
+
 void myDisplay(void) {
 
     glClearColor(0, 0, 0, 1);
@@ -214,11 +233,11 @@ void myTimer(int id) {
 
 void myMouse(int b, int s, int x, int y) {
     if (s == GLUT_DOWN) {
-        cout << "Mouse click detected at coordinates x="
-            << x << " and y=" << y << endl;
         if (b == GLUT_LEFT_BUTTON) {
-            cout << "Left mouse click.  Reversing colors." << endl;
-            glutPostRedisplay();
+            cout << "Left mouse: " << x << ", "<< y << endl;
+        }
+        if (b == GLUT_RIGHT_BUTTON) {
+            cout << "Right mouse: " << x << ", "<< y << endl;
         }
     }
 }
@@ -229,9 +248,21 @@ void myKeyboard(unsigned char c, int x, int y) {
         exit(0);
         break;
     default:
-        cout << "Hit q to quit.  All other characters ignored" << endl;
         break;
     }
+}
+
+void catchKey(int key, int x, int y)
+{
+    if(key == GLUT_KEY_LEFT)    
+        moveAgent(0);
+    else if(key == GLUT_KEY_RIGHT)
+        moveAgent(1);
+    else if(key == GLUT_KEY_DOWN)
+        moveAgent(2);
+    else if(key == GLUT_KEY_UP)
+        moveAgent(3);
+        
 }
 
 int main(int argc, char** argv)
@@ -249,6 +280,7 @@ int main(int argc, char** argv)
     glutReshapeFunc(myReshape);
     glutMouseFunc(myMouse);
     glutKeyboardFunc(myKeyboard);
+    glutSpecialFunc(catchKey);
     glutTimerFunc(TIMER_DELAY, myTimer, 0);
     glutMainLoop();                             // start it running
     return 0;                                   // ANSI C expects this
