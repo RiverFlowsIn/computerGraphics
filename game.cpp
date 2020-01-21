@@ -19,6 +19,13 @@ class Vehicle {
     float type;                //0.026 is car, 0.052 is truck
 };
 
+class Agent {
+    public:
+    float road;       //25 possible road
+    float position;   //left right position 
+    int direction;    // 0 is up,  1 is down
+};
+
 GLint TIMER_DELAY = 10;                     
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
@@ -30,6 +37,7 @@ int* laneControl = new int[18]();
 Vehicle* vehicles = new Vehicle[100]();
 int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
+Agent agent;
 
 void myReshape(int w, int h) {
     cout << "MyReshape called width=" << w << " height=" << h << endl;
@@ -65,6 +73,10 @@ void fillArrays() {
         vehicleControl[i] = 0;
     }
 
+    agent.road = roads[0];
+    agent.position = 0.5;
+    agent.direction = 0;
+
 }
 
 void drawRoads() {
@@ -93,6 +105,28 @@ void drawLines() {
 }
 
 
+void drawAgent() {
+
+    if (agent.direction == 0) {
+        glBegin(GL_TRIANGLES);
+            glColor3fv(RED_RGB);
+            glVertex2f(agent.position, agent.road + 0.013);
+            glVertex2f(agent.position - 0.010, agent.road - 0.013);
+            glVertex2f(agent.position + 0.010, agent.road - 0.013);
+        glEnd();
+    } else {
+        glBegin(GL_TRIANGLES);
+            glColor3fv(RED_RGB);
+            glVertex2f(agent.position, agent.road - 0.013);
+            glVertex2f(agent.position - 0.010, agent.road + 0.013);
+            glVertex2f(agent.position + 0.010, agent.road + 0.013);
+        glEnd();
+
+    }
+
+}
+
+
 void moveVehicles() {
 
     for (int i = 0; i < 100; i++) {
@@ -114,7 +148,7 @@ void moveVehicles() {
         }
     }
 
-    cout << numberOfVehicle << "\n";
+    //cout << numberOfVehicle << "\n";
 
 }
 
@@ -160,15 +194,7 @@ void myDisplay(void) {
 
     drawRoads();
     drawLines();
-
-    int road = 0;
-
-    glBegin(GL_TRIANGLES);
-		glColor3fv(RED_RGB);
-		glVertex2f(0.5, roads[road] + 0.013);
-		glVertex2f(0.490, roads[road] - 0.013);
-		glVertex2f(0.510, roads[road] - 0.013);
-	glEnd();
+    drawAgent();
 
     int random = std::rand() % 1000 + 1;
     if (random < 100) {
