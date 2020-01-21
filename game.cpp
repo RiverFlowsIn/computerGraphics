@@ -2,6 +2,8 @@
 #include <iostream>                     // C++ I/O
 #include <cstdio>                       // C I/O (for sprintf) 
 #include <cmath>                        // standard definitions
+#include <cstdlib>
+#include <ctime>
 
 #include <GL/glut.h>                    // GLUT
 #include <GL/glu.h>                     // GLU
@@ -9,14 +11,25 @@
 
 using namespace std;                    // make std accessible
 
+class Vehicle {
+  public:
+    float lane;
+    float position;
+    int direction; // 0 is left to right, 1 is right to left
+    float type; //0.026 is car, 0.052 is truck
+};
+
 GLint TIMER_DELAY = 10;                     
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 float* lanes = new float[18]();
+int* laneControl = new int[18]();
 float vehicle = 0.0;
 float car = 1.0;
+Vehicle* vehicles = new Vehicle[100]();
+int* vehicleControl = new int[100]();
 
 void myReshape(int w, int h) {
     cout << "MyReshape called width=" << w << " height=" << h << endl;
@@ -36,6 +49,14 @@ void fillArray() {
         lanes[j++] = number - 0.04;
         lanes[j++] = number;
         lanes[j++] = number + 0.04;
+    }
+
+    for (int i = 0; i < 18; i++) {
+        laneControl[i] = 0;
+    }
+
+    for (int i = 0; i < 100; i++) {
+        vehicleControl[i] = 0;
     }
 
 }
@@ -92,6 +113,62 @@ void drawCar() {
 
 }
 
+void moveVehicles() {
+
+    for (int i = 0; i < 100; i++) {
+        if (vehicleControl[i] == 1) {
+            glColor3fv(BLUE_RGB);
+            glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
+
+            if (vehicles[i].direction == 0)
+                vehicles[i].position += 0.001;
+            else
+                vehicles[i].position -= 0.001;
+        }
+    }
+}
+
+void createVehicle() {
+
+    int randomLane = std::rand() % 18 + 0;
+    int randomVehicle = std::rand() % 2 + 0;
+    int randomDirection = std::rand() % 2 + 0;
+
+
+    Vehicle v;
+    v.lane = lanes[randomLane];
+    if (randomVehicle == 0)
+        v.type = 0.026;
+    else
+        v.type = 0.052;
+
+
+    if (randomDirection == 0) {
+        v.direction = 0;
+        v.position = 0;
+    }
+    else {
+        v.direction = 1;
+        v.position = 1;
+    }
+
+    int index = -1;
+    for (int i = 0; i < 100; i++) {
+        if (vehicleControl[i] == 0) {
+            index = i;
+            break;
+        }
+    }
+    cout << index << "-index \n";
+    if (index != -1) {
+        vehicles[index] = v;
+        vehicleControl[index] = 1;
+    }
+
+    cout << vehicleControl << "\n";
+
+}
+
 void myDisplay(void) {
 
     glClearColor(0, 0, 0, 1);
@@ -99,8 +176,14 @@ void myDisplay(void) {
 
     drawRoads();
     drawLines();
-    drawTruck();
-    drawCar();
+
+    int random = std::rand() % 1000 + 1;
+    if (random < 20) {
+        cout << random << " vehicle çizildi... \n";
+        createVehicle();
+    }
+    moveVehicles();
+
     glutSwapBuffers();
 
 }
@@ -135,7 +218,7 @@ void myKeyboard(unsigned char c, int x, int y) {
 
 int main(int argc, char** argv)
 {
-
+    std::srand(std::time(0));
     fillArray();
 
     glutInit(&argc, argv);                      // OpenGL initializations
