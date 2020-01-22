@@ -38,6 +38,7 @@ int* laneControl = new int[18]();
 Vehicle* vehicles = new Vehicle[100]();
 int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
+int point = 0;
 Agent agent;
 
 void myReshape(int w, int h) {
@@ -191,17 +192,34 @@ void createVehicle() {
 
 
 void moveAgent(int move) {
-    cout << move << "\n";
 
     if (move == 3) {
         if (agent.roadPos < 24) {
             agent.roadPos += 1;
             agent.road = roads[agent.roadPos];
+            if (agent.direction == 0) {
+                point += 1;
+            } else if (agent.direction == 1) {
+                //finish();
+                cout << "son\n";
+            }
+            if (agent.roadPos == 24) {
+                agent.direction = 1;
+            }
         }
     } else if (move == 2) {
         if (agent.roadPos > 0) {
             agent.roadPos -= 1;
             agent.road = roads[agent.roadPos];
+            if (agent.direction == 1) {
+                point += 1;
+            } else if (agent.direction == 0) {
+                //finish();
+                cout << "son\n";
+            }
+            if (agent.roadPos == 0) {
+                agent.direction = 0;
+            }
         }
     } else if (move == 0) {
         if (agent.position > 0.025) {
