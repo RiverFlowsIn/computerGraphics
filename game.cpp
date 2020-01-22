@@ -152,10 +152,16 @@ void moveVehicles() {
                 vehicleControl[i] = 0;
                 numberOfVehicle -= 1;
             }
+
+            if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
+                if (agent.position > vehicles[i].position && agent.position < vehicles[i].position + vehicles[i].type) {
+                    cout << "finish" << "\n";
+                    //finish();
+                }
+            }
         }
     }
 
-    //cout << numberOfVehicle << "\n";
 
 }
 
@@ -253,7 +259,7 @@ void drawPoint() {
     
     char *cstr = &result[0];
 
-    drawString(0,0,1, cstr);
+    drawString(0, 0.005, 1, cstr);
 }
 
 void drawNumberOfVehicle() {
@@ -265,7 +271,7 @@ void drawNumberOfVehicle() {
     
     char *cstr = &result[0];
 
-    drawString(0.8,0,1, cstr);
+    drawString(0.775, 0.005, 1, cstr);
 }
 
 void myDisplay(void) {
