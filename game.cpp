@@ -4,6 +4,10 @@
 #include <cmath>                        // standard definitions
 #include <cstdlib>
 #include <ctime>
+#include <string.h>
+#include <sstream>
+#include <string>
+#include <cstring>
 
 #include <GL/glut.h>                    // GLUT
 #include <GL/glu.h>                     // GLU
@@ -232,6 +236,38 @@ void moveAgent(int move) {
     }
 }
 
+void drawString(float x, float y, float z, char *string) {
+  
+  glRasterPos3f(x, y, z);
+  for (char* c = string; *c != '\0'; c++) {
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+  }
+}
+
+void drawPoint() {
+    std::string puan = "Puan: ";
+    std::string result;
+    std::stringstream sstm;
+    sstm << puan << point;
+    result = sstm.str();
+    
+    char *cstr = &result[0];
+
+    drawString(0,0,1, cstr);
+}
+
+void drawNumberOfVehicle() {
+    std::string puan = "Vehicle: ";
+    std::string result;
+    std::stringstream sstm;
+    sstm << puan << numberOfVehicle;
+    result = sstm.str();
+    
+    char *cstr = &result[0];
+
+    drawString(0.8,0,1, cstr);
+}
+
 void myDisplay(void) {
 
     glClearColor(0, 0, 0, 1);
@@ -246,6 +282,9 @@ void myDisplay(void) {
         createVehicle();
     }
     moveVehicles();
+
+    drawPoint();
+    drawNumberOfVehicle();
 
     glutSwapBuffers();
 
