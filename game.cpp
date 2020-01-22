@@ -43,6 +43,7 @@ Vehicle* vehicles = new Vehicle[100]();
 int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
 int point = 0;
+int isStopped = 0;
 Agent agent;
 
 void myReshape(int w, int h) {
@@ -159,14 +160,23 @@ void moveVehicles() {
 
             if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
                 if (agent.position > vehicles[i].position && agent.position < vehicles[i].position + vehicles[i].type) {
-                    //cout << "finish" << "\n";
                     finish();
                 }
             }
         }
     }
 
+}
 
+void drawVehicles() {
+
+    for (int i = 0; i < 100; i++) {
+        if (vehicleControl[i] == 1) {
+            glColor3fv(BLUE_RGB);
+            glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
+        }
+    }
+    
 }
 
 
@@ -215,7 +225,6 @@ void moveAgent(int move) {
                 point += 1;
             } else if (agent.direction == 1) {
                 finish();
-                //cout << "son\n";
             }
             if (agent.roadPos == 24) {
                 agent.direction = 1;
@@ -229,7 +238,6 @@ void moveAgent(int move) {
                 point += 1;
             } else if (agent.direction == 0) {
                 finish();
-                //cout << "son\n";
             }
             if (agent.roadPos == 0) {
                 agent.direction = 0;
@@ -287,11 +295,16 @@ void myDisplay(void) {
     drawLines();
     drawAgent();
 
-    int random = std::rand() % 1000 + 1;
-    if (random < 100) {
-        createVehicle();
+    if (isStopped == 0) {
+        int random = std::rand() % 1000 + 1;
+        if (random < 100) {
+            createVehicle();
+        }
+        moveVehicles();
+    } else {
+        drawVehicles();
     }
-    moveVehicles();
+
 
     drawPoint();
     drawNumberOfVehicle();
@@ -310,9 +323,11 @@ void myMouse(int b, int s, int x, int y) {
     if (s == GLUT_DOWN) {
         if (b == GLUT_LEFT_BUTTON) {
             cout << "Left mouse: " << x << ", "<< y << endl;
+            isStopped = 0;
         }
         if (b == GLUT_RIGHT_BUTTON) {
             cout << "Right mouse: " << x << ", "<< y << endl;
+            isStopped = 1;
         }
     }
 }
