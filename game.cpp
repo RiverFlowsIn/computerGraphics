@@ -47,7 +47,6 @@ int isStopped = 0;
 Agent agent;
 
 void myReshape(int w, int h) {
-    cout << "MyReshape called width=" << w << " height=" << h << endl;
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -322,11 +321,12 @@ void myTimer(int id) {
 void myMouse(int b, int s, int x, int y) {
     if (s == GLUT_DOWN) {
         if (b == GLUT_LEFT_BUTTON) {
-            cout << "Left mouse: " << x << ", "<< y << endl;
             isStopped = 0;
         }
         if (b == GLUT_RIGHT_BUTTON) {
-            cout << "Right mouse: " << x << ", "<< y << endl;
+            if (isStopped == 1) {
+                moveVehicles();
+            }
             isStopped = 1;
         }
     }
