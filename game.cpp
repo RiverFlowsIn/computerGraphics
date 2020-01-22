@@ -86,6 +86,10 @@ void fillArrays() {
 
 }
 
+void finish() {
+    exit(0);
+}
+
 void drawRoads() {
 
     for (int i = 4; i < 85; i = i + 16) {
@@ -155,8 +159,8 @@ void moveVehicles() {
 
             if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
                 if (agent.position > vehicles[i].position && agent.position < vehicles[i].position + vehicles[i].type) {
-                    cout << "finish" << "\n";
-                    //finish();
+                    //cout << "finish" << "\n";
+                    finish();
                 }
             }
         }
@@ -210,8 +214,8 @@ void moveAgent(int move) {
             if (agent.direction == 0) {
                 point += 1;
             } else if (agent.direction == 1) {
-                //finish();
-                cout << "son\n";
+                finish();
+                //cout << "son\n";
             }
             if (agent.roadPos == 24) {
                 agent.direction = 1;
@@ -224,8 +228,8 @@ void moveAgent(int move) {
             if (agent.direction == 1) {
                 point += 1;
             } else if (agent.direction == 0) {
-                //finish();
-                cout << "son\n";
+                finish();
+                //cout << "son\n";
             }
             if (agent.roadPos == 0) {
                 agent.direction = 0;
