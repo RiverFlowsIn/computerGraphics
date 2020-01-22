@@ -44,6 +44,7 @@ int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
 int point = 0;
 int isStopped = 0;
+int isFinised = 0;
 Agent agent;
 
 void myReshape(int w, int h) {
@@ -86,8 +87,22 @@ void fillArrays() {
 
 }
 
+void drawString(float x, float y, float z, char *string) {
+  
+  glRasterPos3f(x, y, z);
+  for (char* c = string; *c != '\0'; c++) {
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+  }
+}
+
 void finish() {
-    exit(0);
+    isStopped = 1;
+    isFinised = 1;
+}
+
+void drawFinishText() {
+    char finishText[] = "Press q to quit.";
+    drawString(0.38, 0.49, 1, finishText);
 }
 
 void drawRoads() {
@@ -253,14 +268,6 @@ void moveAgent(int move) {
     }
 }
 
-void drawString(float x, float y, float z, char *string) {
-  
-  glRasterPos3f(x, y, z);
-  for (char* c = string; *c != '\0'; c++) {
-    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
-  }
-}
-
 void drawPoint() {
     std::string puan = "Puan: ";
     std::string result;
@@ -308,6 +315,10 @@ void myDisplay(void) {
     drawPoint();
     drawNumberOfVehicle();
 
+    if (isFinised == 1) {
+        drawFinishText();
+    }
+
     glutSwapBuffers();
 
 }
@@ -319,17 +330,26 @@ void myTimer(int id) {
 }
 
 void myMouse(int b, int s, int x, int y) {
-    if (s == GLUT_DOWN) {
-        if (b == GLUT_LEFT_BUTTON) {
-            isStopped = 0;
-        }
-        if (b == GLUT_RIGHT_BUTTON) {
-            if (isStopped == 1) {
-                moveVehicles();
+
+    if (isFinised == 0) {
+        if (s == GLUT_DOWN) {
+            if (b == GLUT_LEFT_BUTTON) {
+                if (isStopped == 0)
+                    isStopped = 1;
+                else
+                    isStopped = 0;
             }
-            isStopped = 1;
+            if (b == GLUT_RIGHT_BUTTON) {
+                if (isStopped == 0)
+                    isStopped = 1;
+                
+                if (isStopped == 1) {
+                    moveVehicles();
+                }
+            }
         }
     }
+
 }
 
 void myKeyboard(unsigned char c, int x, int y) {
@@ -342,17 +362,18 @@ void myKeyboard(unsigned char c, int x, int y) {
     }
 }
 
-void catchKey(int key, int x, int y)
-{
-    if(key == GLUT_KEY_LEFT)    
-        moveAgent(0);
-    else if(key == GLUT_KEY_RIGHT)
-        moveAgent(1);
-    else if(key == GLUT_KEY_DOWN)
-        moveAgent(2);
-    else if(key == GLUT_KEY_UP)
-        moveAgent(3);
-        
+void catchKey(int key, int x, int y) {
+    if (isStopped == 0) {
+        if(key == GLUT_KEY_LEFT)    
+            moveAgent(0);
+        else if(key == GLUT_KEY_RIGHT)
+            moveAgent(1);
+        else if(key == GLUT_KEY_DOWN)
+            moveAgent(2);
+        else if(key == GLUT_KEY_UP)
+            moveAgent(3);
+    }
+
 }
 
 int main(int argc, char** argv)
