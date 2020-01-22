@@ -194,15 +194,23 @@ void moveAgent(int move) {
     cout << move << "\n";
 
     if (move == 3) {
-        agent.roadPos += 1;
-        agent.road = roads[agent.roadPos];
+        if (agent.roadPos < 24) {
+            agent.roadPos += 1;
+            agent.road = roads[agent.roadPos];
+        }
     } else if (move == 2) {
-        agent.roadPos -= 1;
-        agent.road = roads[agent.roadPos];
+        if (agent.roadPos > 0) {
+            agent.roadPos -= 1;
+            agent.road = roads[agent.roadPos];
+        }
     } else if (move == 0) {
-        agent.position -= 0.025;
+        if (agent.position > 0.025) {
+            agent.position -= 0.025;
+        }
     } else if (move == 1) {
-        agent.position += 0.025;
+        if (agent.position < 0.950) {
+            agent.position += 0.025;
+        }
     }
 }
 
