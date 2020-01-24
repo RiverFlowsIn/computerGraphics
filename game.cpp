@@ -31,15 +31,24 @@ public:
     int direction;    // 0 is up,  1 is down
 };
 
+class Coin {
+public:
+    float lane;
+    float position;
+    float time;
+};
+
 GLint TIMER_DELAY = 10;
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
+GLfloat YELLOW_RGB[] = { 0.8, 0.8, 0 };
 float* lanes = new float[18]();
 float* roads = new float[25]();
 int* laneControl = new int[18]();
 Vehicle* vehicles = new Vehicle[100]();
+Coin* coins = new Coin[10];
 int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
 int point = 0;
@@ -229,6 +238,41 @@ void createVehicle() {
 
 }
 
+void drawCoins() {
+
+    float x1, y1, x2, y2;
+    float angle;
+    double radius = 0.02;
+
+    x1 = 0.5, y1 = lanes[0];
+    glColor3fv(YELLOW_RGB);
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(x1, y1);
+
+    for (angle = 1.0f; angle < 361.0f; angle += 0.2)
+    {
+        x2 = x1 + sin(angle) * radius;
+        y2 = y1 + cos(angle) * radius;
+        glVertex2f(x2, y2);
+    }
+
+    glEnd();
+
+}
+
+void createCoin() {
+
+    int randomLane = std::rand() % 18 + 0;
+    int randomPosition = std::rand() % 2 + 0;
+
+    Coin c;
+    c.time = 10000;
+    c.lane = lanes[randomLane];
+    c.position = 0.5;
+
+}
+
 
 void moveAgent(int move) {
 
@@ -317,7 +361,6 @@ void myDisplay(void) {
     else {
         drawVehicles();
     }
-
 
     drawPoint();
     drawNumberOfVehicle();
