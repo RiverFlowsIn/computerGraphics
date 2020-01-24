@@ -280,7 +280,7 @@ void createCoin() {
 
     int randomLane = std::rand() % 18 + 0;
     int randomPosition = std::rand() % 39 + 1;
-    int randomTime = std::rand() % 500 + 300;
+    int randomTime = std::rand() % 400 + 300;
 
     randomPosition *= 25;
     float rPos = randomPosition / 1000.0;
@@ -333,6 +333,13 @@ void moveAgent(int move) {
     else if (move == 1) {
         if (agent.position < 0.950) {
             agent.position += 0.025;
+        }
+    }
+
+    if (agent.road > coin.lane - 0.013 && agent.road < coin.lane + 0.013) {
+        if (agent.position > coin.position - 0.05 && agent.position < coin.position + 0.05) {
+            point += 5;
+            coin.isExist = 0;
         }
     }
 }
