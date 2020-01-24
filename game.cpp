@@ -45,6 +45,7 @@ int numberOfVehicle = 0;
 int point = 0;
 int isStopped = 0;
 int isFinised = 0;
+int moveStack = -1;
 Agent agent;
 
 void myReshape(int w, int h) {
@@ -351,6 +352,8 @@ void myMouse(int b, int s, int x, int y) {
 
                 if (isStopped == 1) {
                     moveVehicles();
+                    moveAgent(moveStack);
+                    moveStack = -1;
                 }
             }
         }
@@ -378,6 +381,16 @@ void catchKey(int key, int x, int y) {
             moveAgent(2);
         else if (key == GLUT_KEY_UP)
             moveAgent(3);
+    }
+    else {
+        if (key == GLUT_KEY_LEFT)
+            moveStack = 0;
+        else if (key == GLUT_KEY_RIGHT)
+            moveStack = 1;
+        else if (key == GLUT_KEY_DOWN)
+            moveStack = 2;
+        else if (key == GLUT_KEY_UP)
+            moveStack = 3;
     }
 
 }
