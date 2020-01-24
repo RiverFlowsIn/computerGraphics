@@ -16,7 +16,7 @@
 using namespace std;                    // make std accessible
 
 class Vehicle {
-  public:
+public:
     float lane;
     float position;
     int direction;             // 0 is left to right, 1 is right to left
@@ -24,14 +24,14 @@ class Vehicle {
 };
 
 class Agent {
-    public:
+public:
     int roadPos;
     float road;       //25 possible road
     float position;   //left right position 
     int direction;    // 0 is up,  1 is down
 };
 
-GLint TIMER_DELAY = 10;                     
+GLint TIMER_DELAY = 10;
 GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
 GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
@@ -67,7 +67,7 @@ void fillArrays() {
     }
 
     j = 0;
-    for (int i = 2; i < 99; i+= 4) {
+    for (int i = 2; i < 99; i += 4) {
         float number = i / 100.0;
         roads[j++] = number;
     }
@@ -87,12 +87,12 @@ void fillArrays() {
 
 }
 
-void drawString(float x, float y, float z, char *string) {
-  
-  glRasterPos3f(x, y, z);
-  for (char* c = string; *c != '\0'; c++) {
-    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
-  }
+void drawString(float x, float y, float z, char* string) {
+
+    glRasterPos3f(x, y, z);
+    for (char* c = string; *c != '\0'; c++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+    }
 }
 
 void finish() {
@@ -135,17 +135,18 @@ void drawAgent() {
 
     if (agent.direction == 0) {
         glBegin(GL_TRIANGLES);
-            glColor3fv(RED_RGB);
-            glVertex2f(agent.position, agent.road + 0.013);
-            glVertex2f(agent.position - 0.010, agent.road - 0.013);
-            glVertex2f(agent.position + 0.010, agent.road - 0.013);
+        glColor3fv(RED_RGB);
+        glVertex2f(agent.position, agent.road + 0.013);
+        glVertex2f(agent.position - 0.010, agent.road - 0.013);
+        glVertex2f(agent.position + 0.010, agent.road - 0.013);
         glEnd();
-    } else {
+    }
+    else {
         glBegin(GL_TRIANGLES);
-            glColor3fv(RED_RGB);
-            glVertex2f(agent.position, agent.road - 0.013);
-            glVertex2f(agent.position - 0.010, agent.road + 0.013);
-            glVertex2f(agent.position + 0.010, agent.road + 0.013);
+        glColor3fv(RED_RGB);
+        glVertex2f(agent.position, agent.road - 0.013);
+        glVertex2f(agent.position - 0.010, agent.road + 0.013);
+        glVertex2f(agent.position + 0.010, agent.road + 0.013);
         glEnd();
 
     }
@@ -166,14 +167,14 @@ void moveVehicles() {
                 vehicles[i].position -= 0.003;
 
             if (vehicles[i].position < 0 || vehicles[i].position > 1) {
-                Vehicle v;
+                Vehicle v{};
                 vehicles[i] = v;
                 vehicleControl[i] = 0;
                 numberOfVehicle -= 1;
             }
 
             if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
-                if (agent.position > vehicles[i].position && agent.position < vehicles[i].position + vehicles[i].type) {
+                if (agent.position > vehicles[i].position&& agent.position < vehicles[i].position + vehicles[i].type) {
                     finish();
                 }
             }
@@ -190,7 +191,7 @@ void drawVehicles() {
             glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
         }
     }
-    
+
 }
 
 
@@ -210,7 +211,6 @@ void createVehicle() {
 
     v.direction = randomLane % 2 == 0;
     v.position = randomLane % 2 == 0;
- 
 
     int index = -1;
     for (int i = 0; i < 100; i++) {
@@ -237,31 +237,36 @@ void moveAgent(int move) {
             agent.road = roads[agent.roadPos];
             if (agent.direction == 0) {
                 point += 1;
-            } else if (agent.direction == 1) {
+            }
+            else if (agent.direction == 1) {
                 finish();
             }
             if (agent.roadPos == 24) {
                 agent.direction = 1;
             }
         }
-    } else if (move == 2) {
+    }
+    else if (move == 2) {
         if (agent.roadPos > 0) {
             agent.roadPos -= 1;
             agent.road = roads[agent.roadPos];
             if (agent.direction == 1) {
                 point += 1;
-            } else if (agent.direction == 0) {
+            }
+            else if (agent.direction == 0) {
                 finish();
             }
             if (agent.roadPos == 0) {
                 agent.direction = 0;
             }
         }
-    } else if (move == 0) {
+    }
+    else if (move == 0) {
         if (agent.position > 0.025) {
             agent.position -= 0.025;
         }
-    } else if (move == 1) {
+    }
+    else if (move == 1) {
         if (agent.position < 0.950) {
             agent.position += 0.025;
         }
@@ -274,8 +279,8 @@ void drawPoint() {
     std::stringstream sstm;
     sstm << puan << point;
     result = sstm.str();
-    
-    char *cstr = &result[0];
+
+    char* cstr = &result[0];
 
     drawString(0, 0.005, 1, cstr);
 }
@@ -286,8 +291,8 @@ void drawNumberOfVehicle() {
     std::stringstream sstm;
     sstm << puan << numberOfVehicle;
     result = sstm.str();
-    
-    char *cstr = &result[0];
+
+    char* cstr = &result[0];
 
     drawString(0.775, 0.005, 1, cstr);
 }
@@ -307,7 +312,8 @@ void myDisplay(void) {
             createVehicle();
         }
         moveVehicles();
-    } else {
+    }
+    else {
         drawVehicles();
     }
 
@@ -342,7 +348,7 @@ void myMouse(int b, int s, int x, int y) {
             if (b == GLUT_RIGHT_BUTTON) {
                 if (isStopped == 0)
                     isStopped = 1;
-                
+
                 if (isStopped == 1) {
                     moveVehicles();
                 }
@@ -364,13 +370,13 @@ void myKeyboard(unsigned char c, int x, int y) {
 
 void catchKey(int key, int x, int y) {
     if (isStopped == 0) {
-        if(key == GLUT_KEY_LEFT)    
+        if (key == GLUT_KEY_LEFT)
             moveAgent(0);
-        else if(key == GLUT_KEY_RIGHT)
+        else if (key == GLUT_KEY_RIGHT)
             moveAgent(1);
-        else if(key == GLUT_KEY_DOWN)
+        else if (key == GLUT_KEY_DOWN)
             moveAgent(2);
-        else if(key == GLUT_KEY_UP)
+        else if (key == GLUT_KEY_UP)
             moveAgent(3);
     }
 
