@@ -36,6 +36,7 @@ public:
     float lane;
     float position;
     float time;
+    int isExist;
 };
 
 GLint TIMER_DELAY = 10;
@@ -48,7 +49,6 @@ float* lanes = new float[18]();
 float* roads = new float[25]();
 int* laneControl = new int[18]();
 Vehicle* vehicles = new Vehicle[100]();
-Coin* coins = new Coin[10];
 int* vehicleControl = new int[100]();
 int numberOfVehicle = 0;
 int point = 0;
@@ -56,6 +56,7 @@ int isStopped = 0;
 int isFinised = 0;
 int moveStack = -1;
 Agent agent;
+Coin coin;
 
 void myReshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -94,6 +95,8 @@ void fillArrays() {
     agent.road = roads[0];
     agent.position = 0.5;
     agent.direction = 0;
+
+    coin.isExist = 0;
 
 }
 
@@ -177,7 +180,7 @@ void moveVehicles() {
                 vehicles[i].position -= 0.003;
 
             if (vehicles[i].position < 0 || vehicles[i].position > 1) {
-                Vehicle v{};
+                Vehicle v;
                 vehicles[i] = v;
                 vehicleControl[i] = 0;
                 numberOfVehicle -= 1;
@@ -238,38 +241,54 @@ void createVehicle() {
 
 }
 
-void drawCoins() {
+void drawCoin() {
 
-    float x1, y1, x2, y2;
-    float angle;
-    double radius = 0.02;
+    if (coin.isExist == 1) {
+        float x1, y1, x2, y2;
+        float angle;
+        double radius = 0.02;
 
-    x1 = 0.5, y1 = lanes[0];
-    glColor3fv(YELLOW_RGB);
+        x1 = coin.position;
+        y1 = coin.lane;
+        glColor3fv(YELLOW_RGB);
 
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(x1, y1);
+        glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x1, y1);
 
-    for (angle = 1.0f; angle < 361.0f; angle += 0.2)
-    {
-        x2 = x1 + sin(angle) * radius;
-        y2 = y1 + cos(angle) * radius;
-        glVertex2f(x2, y2);
+        for (angle = 1.0f; angle < 361.0f; angle += 0.2)
+        {
+            x2 = x1 + sin(angle) * radius;
+            y2 = y1 + cos(angle) * radius;
+            glVertex2f(x2, y2);
+        }
+
+        glEnd();
+    
+
+        if (isStopped == 0) {
+            coin.time -= 1;
+        }
+
+        if (coin.time < 0) {
+            coin.isExist = 0;
+        }
     }
-
-    glEnd();
 
 }
 
 void createCoin() {
 
     int randomLane = std::rand() % 18 + 0;
-    int randomPosition = std::rand() % 2 + 0;
+    int randomPosition = std::rand() % 39 + 1;
+    int randomTime = std::rand() % 500 + 300;
 
-    Coin c;
-    c.time = 10000;
-    c.lane = lanes[randomLane];
-    c.position = 0.5;
+    randomPosition *= 25;
+    float rPos = randomPosition / 1000.0;
+
+    coin.isExist = 1;
+    coin.time = randomTime;
+    coin.lane = lanes[randomLane];
+    coin.position = rPos;
 
 }
 
@@ -365,6 +384,14 @@ void myDisplay(void) {
     drawPoint();
     drawNumberOfVehicle();
 
+    if (isStopped == 0 && coin.isExist == 0) {
+        int random = std::rand() % 1000 + 1;
+        if (random < 5) {
+            createCoin();
+        }
+    }
+    drawCoin();
+
     if (isFinised == 1) {
         drawFinishText();
     }
@@ -397,6 +424,9 @@ void myMouse(int b, int s, int x, int y) {
                     moveVehicles();
                     moveAgent(moveStack);
                     moveStack = -1;
+                    if (coin.isExist == 1) {
+                        coin.time -= 1;
+                    }
                 }
             }
         }
