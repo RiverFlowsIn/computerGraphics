@@ -1,47 +1,46 @@
-#include <cstdlib>                      // standard definitions
-#include <iostream>                     // C++ I/O
-#include <cstdio>                       // C I/O (for sprintf) 
-#include <cmath>                        // standard definitions
 #include <cstdlib>
+#include <iostream>
+#include <cstdio>
+#include <cmath>
 #include <ctime>
 #include <string.h>
 #include <sstream>
 #include <string>
 #include <cstring>
 
-#include <GL/glut.h>                    // GLUT
-#include <GL/glu.h>                     // GLU
-#include <GL/gl.h>                      // OpenGL
+#include <GL/glut.h>
+#include <GL/glu.h>
+#include <GL/gl.h>
 
-using namespace std;                    // make std accessible
+using namespace std;
 
 class Vehicle {
 public:
-    float lane;
-    float position;
-    int direction;             // 0 is left to right, 1 is right to left
-    float type;                //0.026 is car, 0.052 is truck
+    float lane;         // Vehicle vertical lane position
+    float position;     // Vehicle horizontal position
+    int direction;      // Left(0) - Right(1)
+    float type;         // Car(0.026) - Truck(0.052)
 };
 
 class Agent {
 public:
-    int roadPos;
-    float road;       //25 possible road
-    float position;   //left right position 
-    int direction;    // 0 is up,  1 is down
+    int roadPos;        // 0-24 Agent vertical position number
+    float road;         // 0-1 Agent vertical position
+    float position;     // Agent horizontal position 
+    int direction;      // Up(0) - Down(1)
 };
 
 class Coin {
 public:
-    float lane;
-    float position;
-    float time;
-    int isExist;
+    float lane;         // Coin vertical lane position
+    float position;     // Coin horizontal position
+    float time;         // Time left to disappear
+    int isExist;        // Not exist(0) - Exist(1)
 };
 
 GLint TIMER_DELAY = 10;
-GLfloat RED_RGB[] = { 1.0, 0.0, 0.0 };
-GLfloat BLUE_RGB[] = { 0.0, 0.0, 1.0 };
+GLfloat RED_RGB[] = { 1, 0, 0 };
+GLfloat BLUE_RGB[] = { 0, 0, 1 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 GLfloat YELLOW_RGB[] = { 0.8, 0.8, 0 };
@@ -58,7 +57,7 @@ int moveStack = -1;
 Agent agent;
 Coin coin;
 
-void myReshape(int w, int h) {
+void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -100,6 +99,11 @@ void fillArrays() {
 
 }
 
+void finish() {
+    isStopped = 1;
+    isFinised = 1;
+}
+
 void drawString(float x, float y, float z, char* string) {
 
     glRasterPos3f(x, y, z);
@@ -108,14 +112,33 @@ void drawString(float x, float y, float z, char* string) {
     }
 }
 
-void finish() {
-    isStopped = 1;
-    isFinised = 1;
-}
-
 void drawFinishText() {
     char finishText[] = "Press q to quit.";
     drawString(0.38, 0.49, 1, finishText);
+}
+
+void drawPoint() {
+    std::string puan = "Puan: ";
+    std::string result;
+    std::stringstream sstm;
+    sstm << puan << point;
+    result = sstm.str();
+
+    char* cstr = &result[0];
+
+    drawString(0, 0.005, 1, cstr);
+}
+
+void drawNumberOfVehicle() {
+    std::string puan = "Vehicle: ";
+    std::string result;
+    std::stringstream sstm;
+    sstm << puan << numberOfVehicle;
+    result = sstm.str();
+
+    char* cstr = &result[0];
+
+    drawString(0.775, 0.005, 1, cstr);
 }
 
 void drawRoads() {
@@ -166,36 +189,6 @@ void drawAgent() {
 
 }
 
-
-void moveVehicles() {
-
-    for (int i = 0; i < 100; i++) {
-        if (vehicleControl[i] == 1) {
-            glColor3fv(BLUE_RGB);
-            glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
-
-            if (vehicles[i].direction == 0)
-                vehicles[i].position += 0.003;
-            else
-                vehicles[i].position -= 0.003;
-
-            if (vehicles[i].position < 0 || vehicles[i].position > 1) {
-                Vehicle v;
-                vehicles[i] = v;
-                vehicleControl[i] = 0;
-                numberOfVehicle -= 1;
-            }
-
-            if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
-                if (agent.position > vehicles[i].position&& agent.position < vehicles[i].position + vehicles[i].type) {
-                    finish();
-                }
-            }
-        }
-    }
-
-}
-
 void drawVehicles() {
 
     for (int i = 0; i < 100; i++) {
@@ -203,40 +196,6 @@ void drawVehicles() {
             glColor3fv(BLUE_RGB);
             glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
         }
-    }
-
-}
-
-
-void createVehicle() {
-
-    int randomLane = std::rand() % 18 + 0;
-    int randomVehicle = std::rand() % 2 + 0;
-    int randomDirection = std::rand() % 2 + 0;
-
-
-    Vehicle v;
-    v.lane = lanes[randomLane];
-    if (randomVehicle == 0)
-        v.type = 0.026;
-    else
-        v.type = 0.052;
-
-    v.direction = randomLane % 2 == 0;
-    v.position = randomLane % 2 == 0;
-
-    int index = -1;
-    for (int i = 0; i < 100; i++) {
-        if (vehicleControl[i] == 0) {
-            index = i;
-            break;
-        }
-    }
-
-    if (index != -1) {
-        vehicles[index] = v;
-        vehicleControl[index] = 1;
-        numberOfVehicle += 1;
     }
 
 }
@@ -276,22 +235,35 @@ void drawCoin() {
 
 }
 
-void createCoin() {
 
-    int randomLane = std::rand() % 18 + 0;
-    int randomPosition = std::rand() % 39 + 1;
-    int randomTime = std::rand() % 400 + 300;
+void moveVehicles() {
 
-    randomPosition *= 25;
-    float rPos = randomPosition / 1000.0;
+    for (int i = 0; i < 100; i++) {
+        if (vehicleControl[i] == 1) {
+            glColor3fv(BLUE_RGB);
+            glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
 
-    coin.isExist = 1;
-    coin.time = randomTime;
-    coin.lane = lanes[randomLane];
-    coin.position = rPos;
+            if (vehicles[i].direction == 0)
+                vehicles[i].position += 0.003;
+            else
+                vehicles[i].position -= 0.003;
+
+            if (vehicles[i].position < 0 || vehicles[i].position > 1) {
+                Vehicle v;
+                vehicles[i] = v;
+                vehicleControl[i] = 0;
+                numberOfVehicle -= 1;
+            }
+
+            if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
+                if (agent.position > vehicles[i].position&& agent.position < vehicles[i].position + vehicles[i].type) {
+                    finish();
+                }
+            }
+        }
+    }
 
 }
-
 
 void moveAgent(int move) {
 
@@ -344,31 +316,73 @@ void moveAgent(int move) {
     }
 }
 
-void drawPoint() {
-    std::string puan = "Puan: ";
-    std::string result;
-    std::stringstream sstm;
-    sstm << puan << point;
-    result = sstm.str();
+void createVehicle() {
 
-    char* cstr = &result[0];
+    int randomLane = std::rand() % 18 + 0;
+    int randomVehicle = std::rand() % 2 + 0;
+    int randomDirection = std::rand() % 2 + 0;
 
-    drawString(0, 0.005, 1, cstr);
+
+    Vehicle v;
+    v.lane = lanes[randomLane];
+    if (randomVehicle == 0)
+        v.type = 0.026;
+    else
+        v.type = 0.052;
+
+    v.direction = randomLane % 2 == 0;
+    v.position = randomLane % 2 == 0;
+
+    int index = -1;
+    for (int i = 0; i < 100; i++) {
+        if (vehicleControl[i] == 0) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index != -1) {
+        vehicles[index] = v;
+        vehicleControl[index] = 1;
+        numberOfVehicle += 1;
+    }
+
 }
 
-void drawNumberOfVehicle() {
-    std::string puan = "Vehicle: ";
-    std::string result;
-    std::stringstream sstm;
-    sstm << puan << numberOfVehicle;
-    result = sstm.str();
+void createCoin() {
 
-    char* cstr = &result[0];
+    int randomLane = std::rand() % 18 + 0;
+    int randomPosition = std::rand() % 39 + 1;
+    int randomTime = std::rand() % 400 + 300;
 
-    drawString(0.775, 0.005, 1, cstr);
+    randomPosition *= 25;
+    float rPos = randomPosition / 1000.0;
+
+    coin.isExist = 1;
+    coin.time = randomTime;
+    coin.lane = lanes[randomLane];
+    coin.position = rPos;
+
 }
 
-void myDisplay(void) {
+void powerMove() {
+    cout << agent.direction << "\n";
+    cout << agent.roadPos << "\n";
+
+    if (agent.direction == 0) {
+        int moveCount = 24 - agent.roadPos;
+        for (int i = 0; i < moveCount; i++) {
+            moveAgent(3);
+        }
+            
+    } else {
+        int moveCount = agent.roadPos;
+        for (int i = 0; i < moveCount; i++)
+            moveAgent(2);
+    }
+}
+
+void displayFunct(void) {
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -407,13 +421,13 @@ void myDisplay(void) {
 
 }
 
-void myTimer(int id) {
+void timerFunct(int id) {
 
     glutPostRedisplay();
-    glutTimerFunc(TIMER_DELAY, myTimer, 0);
+    glutTimerFunc(TIMER_DELAY, timerFunct, 0);
 }
 
-void myMouse(int b, int s, int x, int y) {
+void mouseFunct(int b, int s, int x, int y) {
 
     if (isFinised == 0) {
         if (s == GLUT_DOWN) {
@@ -445,7 +459,7 @@ void myMouse(int b, int s, int x, int y) {
 
 }
 
-void myKeyboard(unsigned char c, int x, int y) {
+void keyboardFunct(unsigned char c, int x, int y) {
     switch (c) {
     case 'q':
         exit(0);
@@ -453,9 +467,13 @@ void myKeyboard(unsigned char c, int x, int y) {
     default:
         break;
     }
+    
+    if ((int)c == 13) {
+        powerMove();
+    }
 }
 
-void catchKey(int key, int x, int y) {
+void catchKeyFunct(int key, int x, int y) {
     if (isStopped == 0) {
         if (key == GLUT_KEY_LEFT)
             moveAgent(0);
@@ -479,24 +497,24 @@ void catchKey(int key, int x, int y) {
 
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+    
     std::srand(std::time(0));
     fillArrays();
 
-    glutInit(&argc, argv);                      // OpenGL initializations
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);// double buffering and RGB
-    glutInitWindowSize(500, 600);               // create a 500x600 window
-    glutInitWindowPosition(0, 0);               // ...in the upper left
-    glutCreateWindow(argv[0]);                  // create the window
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(500, 600);
+    glutInitWindowPosition(0, 0);
+    glutCreateWindow(argv[0]);
 
-    glutDisplayFunc(myDisplay);                 // setup callbacks
-    glutReshapeFunc(myReshape);
-    glutMouseFunc(myMouse);
-    glutKeyboardFunc(myKeyboard);
-    glutSpecialFunc(catchKey);
-    glutTimerFunc(TIMER_DELAY, myTimer, 0);
-    glutMainLoop();                             // start it running
-    return 0;                                   // ANSI C expects this
+    glutDisplayFunc(displayFunct);
+    glutReshapeFunc(reshapeFunct);
+    glutMouseFunc(mouseFunct);
+    glutKeyboardFunc(keyboardFunct);
+    glutSpecialFunc(catchKeyFunct);
+    glutTimerFunc(TIMER_DELAY, timerFunct, 0);
+    glutMainLoop();
+    return 0;
 
 }
