@@ -366,8 +366,6 @@ void createCoin() {
 }
 
 void powerMove() {
-    cout << agent.direction << "\n";
-    cout << agent.roadPos << "\n";
 
     if (agent.direction == 0) {
         int moveCount = 24 - agent.roadPos;
@@ -469,7 +467,7 @@ void keyboardFunct(unsigned char c, int x, int y) {
     }
     
     if ((int)c == 13) {
-        powerMove();
+        //powerMove();
     }
 }
 
