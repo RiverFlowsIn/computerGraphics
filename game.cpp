@@ -434,6 +434,10 @@ void myMouse(int b, int s, int x, int y) {
                     if (coin.isExist == 1) {
                         coin.time -= 1;
                     }
+                    int random = std::rand() % 1000 + 1;
+                    if (random < 100) {
+                        createVehicle();
+                    }
                 }
             }
         }
