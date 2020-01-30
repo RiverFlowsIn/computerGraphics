@@ -45,6 +45,8 @@ GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 GLfloat YELLOW_RGB[] = { 0.8, 0.8, 0 };
 GLfloat ORANGE_RGB[] = { 1, 0.5, 0 };
+GLfloat GRAY_RGB[] = { 0.6, 0.6, 0.6 };
+
 
 
 float* lanes = new float[18]();
@@ -113,6 +115,7 @@ void finish() {
 void drawString(float x, float y, float z, char* string) {
 
     glRasterPos3f(x, y, z);
+    glColor3fv(YELLOW_RGB);
     for (char* c = string; *c != '\0'; c++) {
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
     }
@@ -151,7 +154,11 @@ void drawRoads() {
 
     for (int i = 4; i < 85; i = i + 16) {
         double value = i / 100.0;
-        glColor3fv(WHITE_RGB);
+
+        if (isFinised == 1)
+            glColor3fv(GRAY_RGB);
+        else
+            glColor3fv(WHITE_RGB);
         glRectf(0, value, 1, value + 0.12);
     }
 
@@ -199,7 +206,7 @@ void drawVehicles() {
 
     for (int i = 0; i < 100; i++) {
         if (vehicleControl[i] == 1) {
-            if ( i == crashedVehicle)
+            if (i == crashedVehicle)
                 glColor3fv(ORANGE_RGB);
             else
                 glColor3fv(BLUE_RGB);
@@ -395,6 +402,7 @@ void displayFunct(void) {
         drawVehicles();
     }
 
+    glColor3fv(YELLOW_RGB);
     drawPoint();
     drawNumberOfVehicle();
 
@@ -406,7 +414,7 @@ void displayFunct(void) {
     }
     drawCoin();
 
-    
+
     if (powerMode == 1 && isFinised == 0) {
         if (agent.direction == 0) {
             moveAgent(3);
@@ -420,7 +428,7 @@ void displayFunct(void) {
             powerMode = 0;
             point += powerCounter;
             powerCounter = 0;
-        }   
+        }
     }
 
     if (isFinised == 1) {
