@@ -22,19 +22,21 @@ A game made with openGL for Bil 421 Homework 1
 - When the game starts, the agent is at the bottom center.
 - Agent can be moved with the arrow keys.
 - Moving up and down gives 1 point.
+- Score can be followed from the bottom left.
 - The agent cannot go down while looking up. (or vice versa)
 
 ### Keyboard and Mouse
 - q and Q keys  -> quit game
 - arrow keys    -> agent moves
-- enter         -> power move
 - Left click    -> Start and stop game
 - Right click   -> Stop and move one frame.
-
+- enter         -> power move
 
 ### Extra Features:
-- The number of vehicles in the game can be followed instantly.
+- The number of vehicles in the game can be followed instantly from right bottom.
+- The remaining time of the coin can be tracked from the top left.
 - With the Enter key, the agent can suddenly go to the end of the road. (Power move)
 - If agent can go to the end of the road while in power move, he gets 3 times more points.
 - The color of the vehicle that crashed becomes orange. (Normally blue)
 - When the game is over, the background color fades.
+- 

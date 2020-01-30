@@ -45,7 +45,7 @@ GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 GLfloat YELLOW_RGB[] = { 0.8, 0.8, 0 };
 GLfloat ORANGE_RGB[] = { 1, 0.5, 0 };
-GLfloat GRAY_RGB[] = { 0.6, 0.6, 0.6 };
+GLfloat GRAY_RGB[] = { 0.5, 0.5, 0.5 };
 
 
 
@@ -138,6 +138,18 @@ void drawPoint() {
     drawString(0, 0.005, 1, cstr);
 }
 
+void drawRemainingTime() {
+    std::string puan = "Time: ";
+    std::string result;
+    std::stringstream sstm;
+    sstm << puan << coin.time / 100;
+    result = sstm.str();
+
+    char* cstr = &result[0];
+
+    drawString(0, 0.967, 1, cstr);
+}
+
 void drawNumberOfVehicle() {
     std::string puan = "Vehicle: ";
     std::string result;
@@ -220,6 +232,7 @@ void drawVehicles() {
 void drawCoin() {
 
     if (coin.isExist == 1) {
+        drawRemainingTime();
         float x1, y1, x2, y2;
         float angle;
         double radius = 0.02;
