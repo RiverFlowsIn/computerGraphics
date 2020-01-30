@@ -49,24 +49,23 @@ GLfloat GRAY_RGB[] = { 0.5, 0.5, 0.5 };
 
 
 
-float* lanes = new float[18]();
-float* roads = new float[25]();
-int* laneControl = new int[18]();
-Vehicle* vehicles = new Vehicle[100]();
-int* vehicleControl = new int[100]();
-int numberOfVehicle = 0;
-int point = 0;
-int isStopped = 0;
-int isFinised = 0;
-int moveStack = -1;
-Agent agent;
-Coin coin;
-int powerMode = 0;
-int powerCounter = 0;
-int crashedVehicle = -1;
-float vehicleSpeed = 0.003;
-int vehicleTime = 100;
-int gameMode = 2;
+float* lanes = new float[18]();         // Lane positions
+float* roads = new float[25]();         // Road positions
+Vehicle* vehicles = new Vehicle[100](); // Vehicle array
+int* vehicleControl = new int[100]();   // Vehicle control array
+int numberOfVehicle = 0;                // Number of vehicle
+int point = 0;                          // Game point
+int isStopped = 0;                      // 1 if the game stops, 0 otherwise
+int isFinised = 0;                      // 1 if the game finish, 0 otherwise
+int moveStack = -1;                     // Holds the key pressed when the game is paused
+Agent agent;                            // Agent
+Coin coin;                              // Coin
+int powerMode = 0;                      // 0 if power mode is off, 1 if on
+int powerCounter = 0;                   // Counter for extra point while power mode is on
+int crashedVehicle = -1;                // If the car hits, it keeps its index
+float vehicleSpeed = 0.003;             // Normal mode vehicle speed
+int vehicleTime = 100;                  // Normal mode time to create vehicle
+int gameMode = 2;                       // 1 is easy mode, 2 is normal mode, 3 is hard mode
 
 void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
@@ -77,6 +76,7 @@ void reshapeFunct(int w, int h) {
     glutPostRedisplay();
 }
 
+// Used for initializing game variables.
 void fillArrays() {
 
     int j = 0;
@@ -93,10 +93,6 @@ void fillArrays() {
         roads[j++] = number;
     }
 
-    for (int i = 0; i < 18; i++) {
-        laneControl[i] = 0;
-    }
-
     for (int i = 0; i < 100; i++) {
         vehicleControl[i] = 0;
     }
@@ -110,11 +106,15 @@ void fillArrays() {
 
 }
 
+// Sets the required variables when the game is over.
 void finish() {
+
     isStopped = 1;
     isFinised = 1;
+
 }
 
+// Write on game screen.
 void drawString(float x, float y, float z, char* string) {
 
     glRasterPos3f(x, y, z);
@@ -122,70 +122,81 @@ void drawString(float x, float y, float z, char* string) {
     for (char* c = string; *c != '\0'; c++) {
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
     }
+
 }
 
+// Writes finish text.
 void drawFinishText() {
+
     char finishText[] = "Press q to quit.";
     drawString(0.38, 0.49, 1, finishText);
+
 }
 
+// Writes game score.
 void drawPoint() {
+
     std::string puan = "Puan: ";
     std::string result;
     std::stringstream sstm;
     sstm << puan << point;
     result = sstm.str();
-
     char* cstr = &result[0];
 
     drawString(0, 0.005, 1, cstr);
+
 }
 
+// Writes remaining time of coin.
 void drawRemainingTime() {
+
     std::string puan = "Time: ";
     std::string result;
     std::stringstream sstm;
     sstm << puan << coin.time / 100;
     result = sstm.str();
-
     char* cstr = &result[0];
 
     drawString(0, 0.967, 1, cstr);
+
 }
 
+// Writes game mode.
 void drawGameMode() {
+
     std::string mode = "";
-    if (gameMode == 1) {
+    if (gameMode == 1)
         mode = "Easy";
-    }
-    else if (gameMode == 2) {
+    else if (gameMode == 2)
         mode = "Normal";
-    }
-    else if (gameMode == 3) {
+    else if (gameMode == 3)
         mode = "Hard";
-    }
+
     std::string result;
     std::stringstream sstm;
     sstm << mode;
     result = sstm.str();
-
     char* cstr = &result[0];
 
     drawString(0.85, 0.967, 1, cstr);
+
 }
 
+// Writes number of vehicle.
 void drawNumberOfVehicle() {
+
     std::string puan = "Vehicle: ";
     std::string result;
     std::stringstream sstm;
     sstm << puan << numberOfVehicle;
     result = sstm.str();
-
     char* cstr = &result[0];
 
     drawString(0.775, 0.005, 1, cstr);
+
 }
 
+// Draws roads.
 void drawRoads() {
 
     for (int i = 4; i < 85; i = i + 16) {
@@ -200,6 +211,7 @@ void drawRoads() {
 
 }
 
+// Draws strip lines.
 void drawLines() {
 
     for (int i = 8; i < 95; i = i + 16) {
@@ -213,9 +225,10 @@ void drawLines() {
             glRectf(value, number + 0.04 - 0.002, value + 0.08, number + 0.04 + 0.002);
         }
     }
+
 }
 
-
+// Draws agent.
 void drawAgent() {
 
     if (agent.direction == 0) {
@@ -238,6 +251,7 @@ void drawAgent() {
 
 }
 
+// Draws vehicles if game is stopped.
 void drawVehicles() {
 
     for (int i = 0; i < 100; i++) {
@@ -253,6 +267,7 @@ void drawVehicles() {
 
 }
 
+// Draws coin if it is exist.
 void drawCoin() {
 
     if (coin.isExist == 1) {
@@ -288,7 +303,7 @@ void drawCoin() {
 
 }
 
-
+// Draws vehicles and move them.
 void moveVehicles() {
 
     for (int i = 0; i < 100; i++) {
@@ -319,6 +334,7 @@ void moveVehicles() {
 
 }
 
+// Moves agent, if the array keys are pressed.
 void moveAgent(int move) {
 
     if (move == 3) {
@@ -374,8 +390,10 @@ void moveAgent(int move) {
             coin.isExist = 0;
         }
     }
+
 }
 
+// Creates vehicle randomly.
 void createVehicle() {
 
     int randomLane = std::rand() % 18 + 0;
@@ -409,6 +427,7 @@ void createVehicle() {
 
 }
 
+// Creates coin.
 void createCoin() {
 
     int randomLane = std::rand() % 18 + 0;
@@ -425,6 +444,7 @@ void createCoin() {
 
 }
 
+// Display function.
 void displayFunct(void) {
 
     glClearColor(0, 0, 0, 1);
@@ -496,12 +516,15 @@ void displayFunct(void) {
 
 }
 
+// Timer function.
 void timerFunct(int id) {
 
     glutPostRedisplay();
     glutTimerFunc(TIMER_DELAY, timerFunct, 0);
+
 }
 
+// Mouse function. For left and right click.
 void mouseFunct(int b, int s, int x, int y) {
 
     if (isFinised == 0) {
@@ -524,7 +547,7 @@ void mouseFunct(int b, int s, int x, int y) {
                         coin.time -= 1;
                     }
                     int random = std::rand() % 1000 + 1;
-                    if (random < 100) {
+                    if (random < vehicleTime) {
                         createVehicle();
                     }
                 }
@@ -534,7 +557,9 @@ void mouseFunct(int b, int s, int x, int y) {
 
 }
 
+// Keyboard function. Catches q,Q,1,2,3,enter
 void keyboardFunct(unsigned char c, int x, int y) {
+
     switch (c) {
     case 'q':
     case 'Q':
@@ -558,9 +583,12 @@ void keyboardFunct(unsigned char c, int x, int y) {
             powerMode = 1;
 
     }
+
 }
 
+// Catches arrow keys.
 void catchKeyFunct(int key, int x, int y) {
+
     if (isStopped == 0) {
         if (key == GLUT_KEY_LEFT)
             moveAgent(0);
@@ -584,6 +612,7 @@ void catchKeyFunct(int key, int x, int y) {
 
 }
 
+// Main function.
 int main(int argc, char** argv) {
 
     std::srand(std::time(0));
