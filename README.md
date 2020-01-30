@@ -48,3 +48,13 @@ A game made with openGL for Bil 421 Homework 1
 - Press 1 for easy mode, 3 for normal mode, 3 for hard mode.
 - The game starts in normal mode.
 - Hard mode brings 2x points.
+
+
+### Implementation
+- The game is implemented on both linux and windows.
+- Game works directly in visual studio on windows.
+
+- To run on linux, line 404 should be "Vehicle v{};" because of the C++ version.
+- After changing, run the following commands.
+- g++ game.cpp -o game.o -lGL -lGLU -lglut -lGLEW
+- ./game.o
