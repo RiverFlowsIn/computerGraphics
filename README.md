@@ -31,6 +31,9 @@ A game made with openGL for Bil 421 Homework 1
 - Left click    -> Start and stop game
 - Right click   -> Stop and move one frame.
 - enter         -> power move
+- 1             -> Easy mode
+- 2             -> Normal mode
+- 3             -> Hard mode
 
 ### Extra Features:
 - The number of vehicles in the game can be followed instantly from right bottom.
@@ -39,4 +42,6 @@ A game made with openGL for Bil 421 Homework 1
 - If agent can go to the end of the road while in power move, he gets 3 times more points.
 - The color of the vehicle that crashed becomes orange. (Normally blue)
 - When the game is over, the background color fades.
-- 
+- There are 3 game modes in the game. Easy, normal, hard
+- Press 1 for easy mode, 3 for normal mode, 3 for hard mode.
+- The game starts in normal mode

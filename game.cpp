@@ -66,7 +66,7 @@ int powerCounter = 0;
 int crashedVehicle = -1;
 float vehicleSpeed = 0.003;
 int vehicleTime = 100;
-int gameMode = 3;
+int gameMode = 2;
 
 void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
@@ -511,6 +511,15 @@ void keyboardFunct(unsigned char c, int x, int y) {
     case 'q':
     case 'Q':
         exit(0);
+        break;
+    case '1':
+        gameMode = 1;
+        break;
+    case '2':
+        gameMode = 2;
+        break;
+    case '3':
+        gameMode = 3;
         break;
     default:
         break;
