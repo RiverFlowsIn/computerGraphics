@@ -64,6 +64,9 @@ Coin coin;
 int powerMode = 0;
 int powerCounter = 0;
 int crashedVehicle = -1;
+float vehicleSpeed = 0.003;
+int vehicleTime = 100;
+int gameMode = 3;
 
 void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
@@ -273,9 +276,9 @@ void moveVehicles() {
             glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
 
             if (vehicles[i].direction == 0)
-                vehicles[i].position += 0.003;
+                vehicles[i].position += vehicleSpeed;
             else
-                vehicles[i].position -= 0.003;
+                vehicles[i].position -= vehicleSpeed;
 
             if (vehicles[i].position < 0 || vehicles[i].position > 1) {
                 Vehicle v{};
@@ -404,9 +407,22 @@ void displayFunct(void) {
     drawLines();
     drawAgent();
 
+    if (gameMode == 1) {
+        vehicleSpeed = 0.002;
+        vehicleTime = 60;
+    }
+    else if (gameMode == 2) {
+        vehicleSpeed = 0.003;
+        vehicleTime = 100;
+    }
+    else if (gameMode == 3) {
+        vehicleSpeed = 0.006;
+        vehicleTime = 200;
+    }
+
     if (isStopped == 0) {
         int random = std::rand() % 1000 + 1;
-        if (random < 100) {
+        if (random < vehicleTime) {
             createVehicle();
         }
         moveVehicles();
