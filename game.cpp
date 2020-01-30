@@ -56,6 +56,8 @@ int isFinised = 0;
 int moveStack = -1;
 Agent agent;
 Coin coin;
+int powerMode = 0;
+int powerCounter = 0;
 
 void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
@@ -222,7 +224,6 @@ void drawCoin() {
         }
 
         glEnd();
-    
 
         if (isStopped == 0) {
             coin.time -= 1;
@@ -249,7 +250,7 @@ void moveVehicles() {
                 vehicles[i].position -= 0.003;
 
             if (vehicles[i].position < 0 || vehicles[i].position > 1) {
-                Vehicle v;
+                Vehicle v{};
                 vehicles[i] = v;
                 vehicleControl[i] = 0;
                 numberOfVehicle -= 1;
@@ -365,21 +366,6 @@ void createCoin() {
 
 }
 
-void powerMove() {
-
-    if (agent.direction == 0) {
-        int moveCount = 24 - agent.roadPos;
-        for (int i = 0; i < moveCount; i++) {
-            moveAgent(3);
-        }
-            
-    } else {
-        int moveCount = agent.roadPos;
-        for (int i = 0; i < moveCount; i++)
-            moveAgent(2);
-    }
-}
-
 void displayFunct(void) {
 
     glClearColor(0, 0, 0, 1);
@@ -410,6 +396,23 @@ void displayFunct(void) {
         }
     }
     drawCoin();
+
+    
+    if (powerMode == 1 && isFinised == 0) {
+        if (agent.direction == 0) {
+            moveAgent(3);
+        }
+        else {
+            moveAgent(2);
+        }
+        powerCounter += 2;
+
+        if (agent.roadPos == 0 || agent.roadPos == 24) {
+            powerMode = 0;
+            point += powerCounter;
+            powerCounter = 0;
+        }   
+    }
 
     if (isFinised == 1) {
         drawFinishText();
@@ -460,14 +463,17 @@ void mouseFunct(int b, int s, int x, int y) {
 void keyboardFunct(unsigned char c, int x, int y) {
     switch (c) {
     case 'q':
+    case 'Q':
         exit(0);
         break;
     default:
         break;
     }
-    
+
     if ((int)c == 13) {
-        //powerMove();
+        if (isStopped == 0)
+            powerMode = 1;
+
     }
 }
 
@@ -496,7 +502,7 @@ void catchKeyFunct(int key, int x, int y) {
 }
 
 int main(int argc, char** argv) {
-    
+
     std::srand(std::time(0));
     fillArrays();
 
