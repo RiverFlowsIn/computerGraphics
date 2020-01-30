@@ -153,6 +153,27 @@ void drawRemainingTime() {
     drawString(0, 0.967, 1, cstr);
 }
 
+void drawGameMode() {
+    std::string mode = "";
+    if (gameMode == 1) {
+        mode = "Easy";
+    }
+    else if (gameMode == 2) {
+        mode = "Normal";
+    }
+    else if (gameMode == 3) {
+        mode = "Hard";
+    }
+    std::string result;
+    std::stringstream sstm;
+    sstm << mode;
+    result = sstm.str();
+
+    char* cstr = &result[0];
+
+    drawString(0.85, 0.967, 1, cstr);
+}
+
 void drawNumberOfVehicle() {
     std::string puan = "Vehicle: ";
     std::string result;
@@ -434,6 +455,7 @@ void displayFunct(void) {
     glColor3fv(YELLOW_RGB);
     drawPoint();
     drawNumberOfVehicle();
+    drawGameMode();
 
     if (isStopped == 0 && coin.isExist == 0) {
         int random = std::rand() % 1000 + 1;
