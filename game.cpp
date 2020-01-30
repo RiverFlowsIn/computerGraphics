@@ -327,6 +327,8 @@ void moveAgent(int move) {
             agent.road = roads[agent.roadPos];
             if (agent.direction == 0) {
                 point += 1;
+                if (gameMode == 3)
+                    point += 1;
             }
             else if (agent.direction == 1) {
                 finish();
@@ -342,6 +344,8 @@ void moveAgent(int move) {
             agent.road = roads[agent.roadPos];
             if (agent.direction == 1) {
                 point += 1;
+                if (gameMode == 3)
+                    point += 1;
             }
             else if (agent.direction == 0) {
                 finish();
@@ -365,6 +369,8 @@ void moveAgent(int move) {
     if (agent.road > coin.lane - 0.013 && agent.road < coin.lane + 0.013) {
         if (agent.position > coin.position - 0.05 && agent.position < coin.position + 0.05) {
             point += 5;
+            if (gameMode == 3)
+                point += 5;
             coin.isExist = 0;
         }
     }

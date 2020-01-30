@@ -47,3 +47,4 @@ A game made with openGL for Bil 421 Homework 1
 - Game mode can be seen on the top right.
 - Press 1 for easy mode, 3 for normal mode, 3 for hard mode.
 - The game starts in normal mode.
+- Hard mode brings 2x points.
