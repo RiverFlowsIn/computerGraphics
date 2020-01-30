@@ -44,6 +44,9 @@ GLfloat BLUE_RGB[] = { 0, 0, 1 };
 GLfloat WHITE_RGB[] = { 1, 1, 1 };
 GLfloat BLACK_RGB[] = { 0, 0, 0 };
 GLfloat YELLOW_RGB[] = { 0.8, 0.8, 0 };
+GLfloat ORANGE_RGB[] = { 1, 0.5, 0 };
+
+
 float* lanes = new float[18]();
 float* roads = new float[25]();
 int* laneControl = new int[18]();
@@ -58,6 +61,7 @@ Agent agent;
 Coin coin;
 int powerMode = 0;
 int powerCounter = 0;
+int crashedVehicle = -1;
 
 void reshapeFunct(int w, int h) {
     glViewport(0, 0, w, h);
@@ -195,7 +199,11 @@ void drawVehicles() {
 
     for (int i = 0; i < 100; i++) {
         if (vehicleControl[i] == 1) {
-            glColor3fv(BLUE_RGB);
+            if ( i == crashedVehicle)
+                glColor3fv(ORANGE_RGB);
+            else
+                glColor3fv(BLUE_RGB);
+
             glRectf(vehicles[i].position, vehicles[i].lane - 0.013, vehicles[i].position + vehicles[i].type, vehicles[i].lane + 0.013);
         }
     }
@@ -259,6 +267,7 @@ void moveVehicles() {
             if (agent.road > vehicles[i].lane - 0.013 && agent.road < vehicles[i].lane + 0.013) {
                 if (agent.position > vehicles[i].position&& agent.position < vehicles[i].position + vehicles[i].type) {
                     finish();
+                    crashedVehicle = i;
                 }
             }
         }

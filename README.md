@@ -36,3 +36,5 @@ A game made with openGL for Bil 421 Homework 1
 - The number of vehicles in the game can be followed instantly.
 - With the Enter key, the agent can suddenly go to the end of the road. (Power move)
 - If agent can go to the end of the road while in power move, he gets 3 times more points.
+- The color of the vehicle that crashed becomes orange. (Normally blue)
+- 
