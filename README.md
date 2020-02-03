@@ -60,6 +60,6 @@ A game made with openGL for Bil 421 Homework 1
 - ./game.o
 
 ### Screen Shots
-![Screenshot](C:/Users/msaidzengin/Desktop/ss1)
-![Screenshot](C:/Users/msaidzengin/Desktop/ss2)
-![Screenshot](C:/Users/msaidzengin/Desktop/ss3)
+![Screenshot](ss/ss1)
+![Screenshot](ss/ss2)
+![Screenshot](ss/ss3)
