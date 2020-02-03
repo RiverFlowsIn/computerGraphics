@@ -58,3 +58,8 @@ A game made with openGL for Bil 421 Homework 1
 - After changing, run the following commands.
 - g++ game.cpp -o game.o -lGL -lGLU -lglut -lGLEW
 - ./game.o
+
+### Screen Shots
+![Screenshot](C:/Users/msaidzengin/Desktop/ss1)
+![Screenshot](C:/Users/msaidzengin/Desktop/ss2)
+![Screenshot](C:/Users/msaidzengin/Desktop/ss3)
